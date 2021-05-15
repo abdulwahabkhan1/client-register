@@ -1,0 +1,81 @@
+{
+	"info": {
+		"_postman_id": "0b7ad378-b337-4b00-ae2e-78616556ad03",
+		"name": "mvix",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "accounts",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "mvix-client.test/api/v1/accounts",
+					"host": [
+						"mvix-client",
+						"test"
+					],
+					"path": [
+						"api",
+						"v1",
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"abdul\",\n    \"address1\":  \"test\",\n    \"address2\":  \"test2\",\n    \"city\":  \"lhe\",\n    \"state\": \"kp\",\n    \"country\"           :  \"pk\",\n    \"zipCode\"           :  \"3233\",\n    \"phoneNo1\"          :  \"2323423423\",\n    \"phoneNo2\"          :  \"\",\n    \"user\": {\"firstName\"    : \"abdul\",\n            \"lastName\"     :  \"khan\",\n            \"email\"        :  \"abdul@mail.com\",\n            \"password\"     :  \"abc123\",\n            \"passwordConfirmation\"  :  \"abc123\",\n            \"phone\"        :  \"3232323\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "mvix-client.test/api/v1/register",
+					"host": [
+						"mvix-client",
+						"test"
+					],
+					"path": [
+						"api",
+						"v1",
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

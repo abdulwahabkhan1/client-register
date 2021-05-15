@@ -32,9 +32,9 @@ class RegisterController extends Controller
     public function __invoke(RegisterRequest $request)
     {
         try{
-            $this->clientRepository->register($request->all());
+            $this->clientRepository->register($request);
 
-            return response()->json(['status'   =>  'success'])
+            return response()->json(['status'   =>  'success']);
 
         } catch (\Exception $exception) {
             return response([

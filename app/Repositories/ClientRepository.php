@@ -8,6 +8,7 @@ use App\Repositories\Interfaces\UserRepositoryInterface;
 use GuzzleHttp\Client as GuzzleHttpClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redis;
 
 class ClientRepository extends BaseRepository implements ClientRepositoryInterface
@@ -59,6 +60,7 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
             "end_validity"      =>  now()->addDays(15)->format("Y-m-d"),
             "status"            =>  'Active'
         ];
+
         $client = $this->create($clientData);
 
         //Create user
@@ -69,7 +71,7 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
             "email" => $request->user['email'],
             "password" => Hash::make($request->user['password']),
             "phone" => $request->user['phone'],
-            "last_password_reset" => $now()->format("Y-m--d H:i:s"),
+            "last_password_reset" => now()->format("Y-m--d H:i:s"),
             "status" => 'Active'
         ];
 
@@ -89,7 +91,7 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
             }else{
 
                 $client = new Client();
-                $result = $client->post(config('services.geocode.url')"?address=$address", [
+                $result = $client->post(config('services.geocode.url')."?address=$address", [
                     'form_params' =>    [
                         'key'   =>  config('services.geocode.key')
                     ]
@@ -103,7 +105,7 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
 
                 Redis::set($address, json_encode($coordinates));
 
-                return $coordinates
+                return $coordinates;
             }
         } catch ( \Exception $exception){
             //Log or report exceptinon and continue execution
