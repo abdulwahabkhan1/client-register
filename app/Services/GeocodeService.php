@@ -61,8 +61,12 @@ class GeocodeService
                 'long'  =>  $json->results[0]->geometry->location->lng ?? null
             ];
 
-        } catch (RequestException $re) {
-            throw $re;
+        } catch (\Exception $exception) {
+            //log exception
+            return [
+                'lat'   =>  null,
+                'long'  =>  null
+            ];
         }
     }
 

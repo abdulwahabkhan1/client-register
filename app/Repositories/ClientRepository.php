@@ -59,7 +59,10 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
             $model->sortBy($key, $value);
         }
 
-        $model->groupBy('clients.id');
+        $model->groupByRaw('clients.id, client_name,
+        address1, address2, city, state, country, latitude, longitude,
+        phone_no1, phone_no2, start_validity, end_validity,
+        clients.status, clients.created_at, clients.updated_at');
 
         return $model->paginate();
     }
@@ -83,8 +86,8 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
             "city"              =>  $request->get('city'),
             "state"             =>  $request->get('state'),
             "country"           =>  $request->get('country'),
-            "latitude"          =>  $coordinates['lat'],
-            "longitude"         =>  $coordinates['long'],
+            "latitude"          =>  $coordinates['lat'] ?? null,
+            "longitude"         =>  $coordinates['long'] ?? null,
             "phone_no1"         =>  $request->get('phoneNo1'),
             "phone_no2"         =>  $request->get('phoneNo2'),
             "zip"               =>  $request->get('zipCode'),
