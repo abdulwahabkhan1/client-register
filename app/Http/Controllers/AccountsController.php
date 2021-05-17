@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ClientResource;
+use App\Http\Resources\ClientCollection;
 use App\Repositories\Interfaces\ClientRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -29,13 +29,12 @@ class AccountsController extends Controller
      */
     public function all(Request $request)
     {
-        $accounts = $this->clientRepository->all(
-            [],
+        $accounts = $this->clientRepository->allRaw(
             $request->get('filters', []),
             $request->get('sort', [])
         );
 
-        return new ClientResource($accounts);
+        return new ClientCollection($accounts);
 
     }
 }

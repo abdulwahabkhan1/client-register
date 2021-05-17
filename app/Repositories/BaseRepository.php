@@ -31,17 +31,17 @@ class BaseRepository implements RepositoryInterface
      */
     public function all(array $relations = [], array $filters = [], array $sort = [])
     {
-        $collection = $this->model->with($relations);
+        $model = $this->model->with($relations);
 
         foreach($filters as $key => $value){
-            $collection->where($key, $value);
+            $model->where($key, $value);
         }
 
         foreach($sort as $key => $value){
-            $collection->sortBy($key, $value);
+            $model->sortBy($key, $value);
         }
 
-        return $collection->paginate();
+        return $model->paginate();
     }
 
 

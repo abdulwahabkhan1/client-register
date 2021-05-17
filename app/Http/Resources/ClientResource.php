@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class ClientResource extends ResourceCollection
+class ClientResource extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -14,31 +14,29 @@ class ClientResource extends ResourceCollection
      */
     public function toArray($request)
     {
-        return $this->collection->map(function ($item) {
-            return [
-                "id"            =>  $item->id,
-                "name"          =>  $item->client_name,
-                "address1"      =>  $item->address1,
-                "address2"      =>  $item->address2,
-                "city"          =>  $item->city,
-                "state"         =>  $item->state,
-                "country"       =>  $item->country,
-                "zipCode"       =>  $item->phone_no1,
-                "latitude"      =>  $item->latitude,
-                "longitude"     =>  $item->longitude,
-                "phoneNo1"      =>  $item->phone_no1,
-                "phoneNo2"      =>  $item->phone_no2,
-                "totalUser"     =>  [
-                        "all"      => $item->users->count(),
-                        "active"   => $item->users->where('status',"Active")->count(),
-                        "inactive" => $item->users->where('status',"Inactive")->count(),
-                ],
-                "startValidity" =>  $item->start_validity,
-                "endValifity"   =>  $item->end_validity,
-                "status"        =>  $item->status,
-                "createdAt"     =>  $item->created_at,
-                "updatedAt"     =>  $item->updated_at
-            ];
-        });
+        return [
+            "id"            =>  $this->id,
+            "name"          =>  $this->client_name,
+            "address1"      =>  $this->address1,
+            "address2"      =>  $this->address2,
+            "city"          =>  $this->city,
+            "state"         =>  $this->state,
+            "country"       =>  $this->country,
+            "zipCode"       =>  $this->phone_no1,
+            "latitude"      =>  $this->latitude,
+            "longitude"     =>  $this->longitude,
+            "phoneNo1"      =>  $this->phone_no1,
+            "phoneNo2"      =>  $this->phone_no2,
+            "totalUser"     =>  [
+                    "all"      => $this->total_users,
+                    "active"   => $this->active_users,
+                    "inactive" => $this->inactive_users,
+            ],
+            "startValidity" =>  $this->start_validity,
+            "endValifity"   =>  $this->end_validity,
+            "status"        =>  $this->status,
+            "createdAt"     =>  $this->created_at,
+            "updatedAt"     =>  $this->updated_at
+        ];
     }
 }

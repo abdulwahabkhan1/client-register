@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Models\Client;
 use App\Repositories\Interfaces\ClientRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
-use GuzzleHttp\Client as GuzzleHttpClient;
+use App\Services\GeocodeService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -32,6 +32,38 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
         $this->userRepository = $userRepository;
     }
 
+    /**
+     * Get Accounts Raw query
+     *
+     * @param array $filters
+     * @param array $sort
+     * @return mixed
+     */
+    public function allRaw(array $filters = [], array $sort = [])
+    {
+        $model = $this->model->selectRaw('clients.id AS id, client_name,
+            address1, address2, city, state, country, latitude, longitude,
+            phone_no1, phone_no2, start_validity, end_validity,
+            clients.status as status, clients.created_at, clients.updated_at,
+            COUNT(users.id) as total_users,
+            SUM(IF(users.status = "Active", 1, 0)) AS active_users,
+            SUM(IF(users.status = "Inactive", 1, 0)) AS inactive_users
+        ')
+            ->join('users', 'users.client_id', '=' ,'clients.id');
+
+        foreach($filters as $key => $value){
+            $model->where($key, $value);
+        }
+
+        foreach($sort as $key => $value){
+            $model->sortBy($key, $value);
+        }
+
+        $model->groupBy('clients.id');
+
+        return $model->paginate();
+    }
+
 
     /**
      * Register Client
@@ -51,8 +83,8 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
             "city"              =>  $request->get('city'),
             "state"             =>  $request->get('state'),
             "country"           =>  $request->get('country'),
-            "latitude"          =>  $coordinates['lat'] || null,
-            "longitude"         =>  $coordinates['long'] || null,
+            "latitude"          =>  $coordinates['lat'],
+            "longitude"         =>  $coordinates['long'],
             "phone_no1"         =>  $request->get('phoneNo1'),
             "phone_no2"         =>  $request->get('phoneNo2'),
             "zip"               =>  $request->get('zipCode'),
@@ -87,29 +119,20 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
             $coordinates = Redis::get($address);
 
             if($coordinates){
-                return json_decode($coordinates);
-            }else{
-
-                $client = new Client();
-                $result = $client->post(config('services.geocode.url')."?address=$address", [
-                    'form_params' =>    [
-                        'key'   =>  config('services.geocode.key')
-                    ]
-                ]);
-                $json =json_decode($result->getBody());
-
-                $coordinates = [
-                    'lat'   =>  $json->results[0]->geometry->location->lat || null,
-                    'long'  =>  $json->results[0]->geometry->location->lng || null
-                ];
-
-                Redis::set($address, json_encode($coordinates));
-
-                return $coordinates;
+                return json_decode($coordinates, true);
             }
+
+            $geocodeService = new GeocodeService();
+
+            $coordinates = $geocodeService->getCoordinates($address);
+
+            Redis::set($address, json_encode($coordinates));
+
+            return $coordinates;
+
         } catch ( \Exception $exception){
             //Log or report exceptinon and continue execution
-            return $coordinates = [
+            return [
                 'lat'   =>  null,
                 'long'  =>  null
             ];
