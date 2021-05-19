@@ -106,7 +106,7 @@ class ClientRepository extends BaseRepository implements ClientRepositoryInterfa
             "email" => $request->user['email'],
             "password" => Hash::make($request->user['password']),
             "phone" => $request->user['phone'],
-            "last_password_reset" => now()->format("Y-m--d H:i:s"),
+            "last_password_reset" => now()->format("Y-m-d H:i:s"),
             "status" => 'Active'
         ];
 
